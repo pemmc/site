@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +48,7 @@ namespace SalesWebMvc.Controllers
         {
           if( id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not provide"});
 
             }
 
@@ -55,7 +56,7 @@ namespace SalesWebMvc.Controllers
 
             if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
 
             }
 
@@ -76,7 +77,7 @@ namespace SalesWebMvc.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                RedirectToAction(nameof(Error), new { message = "Id not provider!" });
 
             }
 
@@ -84,7 +85,7 @@ namespace SalesWebMvc.Controllers
 
             if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
 
             }
 
@@ -96,7 +97,7 @@ namespace SalesWebMvc.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not provider!" });
 
             }
 
@@ -104,7 +105,7 @@ namespace SalesWebMvc.Controllers
 
             if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found!" });
 
             }
 
@@ -120,7 +121,7 @@ namespace SalesWebMvc.Controllers
         {
             if (id != seller.Id)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = "Id mismatch!" });
 
             }
 
@@ -131,19 +132,39 @@ namespace SalesWebMvc.Controllers
                 return RedirectToAction(nameof(Index));
 
             }
-            catch (NotFoundException)
+            catch (NotFoundException e)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
 
 
             }
 
-
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException e)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
 
             }
+
+            //ou o supertipo Application Exception UPCASTING as duas excecoes podem casar com esta
+            //catch (ApplicationException e)
+            //{
+            //    return RedirectToAction(nameof(Error), new { message = e.Message });
+            //
+            //
+            //}
+        }
+
+        public IActionResult Error(string message)
+        {
+            var viewModel = new ErrorViewModel
+
+            {
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+
+            };
+
+            return View(viewModel);
         }
     }
 }
