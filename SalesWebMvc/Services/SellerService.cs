@@ -50,7 +50,7 @@ namespace SalesWebMvc.Services
 
             catch (DbUpdateException e)
             {
-                throw new IntegrityException("Não é possíve deletar este vendedor: possui vendas");
+                throw new IntegrityException("Não é possível deletar este vendedor, pois ele possui vendas!");
 
             }
 
