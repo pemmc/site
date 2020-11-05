@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using SalesWebMvc.Services.Exceptions;
 
 namespace SalesWebMvc.Services
 {
@@ -44,6 +45,29 @@ namespace SalesWebMvc.Services
 
             _context.SaveChanges();
 
+        }
+
+        public void Update(Seller obj)
+        {
+            //senão existir
+            if(!_context.Seller.Any(x => x.Id == obj.Id))
+            {
+                throw new NotFoundException("ID NÃO EXISTE!");
+
+            }
+
+            try
+            {
+                _context.Update(obj);
+                _context.SaveChanges();
+
+            }
+
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new DbConcurrencyException(e.Message);
+
+            }
         }
     }
 }
